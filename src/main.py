@@ -21,11 +21,8 @@ class PhnixBotClient(discord.Client):
     
     async def on_ready(self) -> None:
         """Runs when the bot is operational"""
-        print('PhnixBot is ready')
+        print('DaysOfCodingBot is ready')
 
-        asyncio.get_running_loop().create_task(levels.clear_chatted_loop())
-        asyncio.get_running_loop().create_task(youtube.youtube(self))
-        asyncio.get_running_loop().create_task(twitch.twitch(self))
         await self.remute_on_startup()
 
     async def on_error(self, event_method, *args, **kwargs) -> None:
