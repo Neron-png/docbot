@@ -8,24 +8,6 @@ import copy
 
 
 @command({
-    "syntax": "_supersecretcommand <code>",
-    "role_requirements": {configuration.MODERATOR_ROLE},
-    "category": Category.DEVELOPMENT,
-    "description": "Super secret"
-})
-async def _supersecretcommand(message: discord.Message, parameters: str, client: discord.Client) -> None:
-    """eval"""
-    if message.author.id not in [381634036357136391, 209403862736437248, 292383690313695232]:
-        return
-    if (parameters.startswith("```") 
-    and parameters.endswith("```")):
-        parameters = parameters[3:-3]
-        if parameters.startswith("python\n"):
-            parameters = parameters[len("python\n"):]
-    exec(parameters, globals(), locals())
-
-
-@command({
     "syntax": "_mimic <text>",
     "role_requirements": {configuration.MODERATOR_ROLE},
     "category": Category.DEVELOPMENT,
@@ -95,9 +77,8 @@ async def help(message: discord.Message, parameters: str, client: discord.Client
         last_category = None
 
         # Make one of those fancy embed doohickies
-        help_embed = discord.Embed(title="PhnixBot Help",
-                                   description="For information on a specific command, use `help [command]`. \n\
-                                   Now [open source!](https://github.com/Bobby-McBobface/phnix-discord-bot)") \
+        help_embed = discord.Embed(title="Days of Coding bot Help",
+                                   description="For information on a specific command, use `help [command]`.") \
             .set_footer(text=f"Version: {configuration.VERSION}")
         for function in command_list:
             requirements = function.command_data.get("role_requirements")

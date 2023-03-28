@@ -6,24 +6,19 @@ import sys
 
 import commands
 import configuration
-import levels
 import util
-import youtube
-import twitch
 import database_handle
-import automod
 import logger
 
 
 class DOCBotClient(discord.Client):
     
-    DEBUG_SPY_MODE = False
+    DEBUG_SPY_MODE = True
     
     async def on_ready(self) -> None:
         """Runs when the bot is operational"""
         print('DaysOfCodingBot is ready')
 
-        await self.remute_on_startup()
 
     async def on_error(self, event_method, *args, **kwargs) -> None:
         try:
@@ -121,6 +116,8 @@ if __name__ == '__main__':
         token = file.read()
 
     intents = discord.Intents.default()
+    intents.messages = True
+    intents.message_content = True
     intents.members = True
     intents.typing = False
     intents.presences = False

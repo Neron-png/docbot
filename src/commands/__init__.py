@@ -9,10 +9,6 @@ class Category(Enum):
         'friendly_name': 'Moderation',
         'priority': 10
     }
-    LEVELING = {
-        'friendly_name': 'Leveling',
-        'priority': 1
-    }
     DEVELOPMENT = {
         'friendly_name': 'Bot Development',
         'priority': 100
@@ -63,7 +59,6 @@ def command(cmdinfo):
 
 from . import misc
 from . import moderation
-from . import level
 from . import system
 
 # Sort command list by priority for help
