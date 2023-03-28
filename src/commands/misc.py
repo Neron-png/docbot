@@ -18,18 +18,22 @@ async def test(message: discord.Message, parameters: str, client: discord.Client
     await message.channel.send(f"Two plus two is {result}")
 
 @command({
-    "syntax": "pad <message>",
+    "syntax": "submit <code>",
     "category": Category.OTHER,
-    "description": "Spaces out your text"
+    "description": "Submits your code for grading"
 })
-async def pad(message: discord.Message, parameters: str, client: discord.Client) -> None:
-    """Spaces out your text"""
-    if parameters == "":
-        raise CommandSyntaxError("You must specify text to space out.")
-    elif len(parameters) > 1000:
-        await message.channel.send("Message must not surpass 1000 characters")
-    else:
-        await message.channel.send(" ".join(parameters))
+async def submit(message: discord.Message, parameters: str, client: discord.Client) -> None:
+    """Relays a submission to the grading channel"""
+
+    attachmens = message.attachments
+
+    # If no attachment is present, return the appropriate error
+    if not attachmens:
+        raise CommandSyntaxError("You seem to have forgotten to attach a file \nIf you think this is an error, please contact a Moderator")
+    
+    gradingMessage = f"{message.channel.name} | **{message.channel.topic}** | `{message.channel.id}`\n{attachmens[0].url}"
+    await client.get_channel(configuration.SUBMIT_CHANNEL).send(gradingMessage)
+    
 
 @command({
     "syntax": "hug <target>",
