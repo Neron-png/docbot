@@ -3,6 +3,12 @@ import asyncio
 from typing import Callable
 import discord
 import configuration
+import gspread
+
+sa = gspread.service_account(configuration.SHEETS_TOKEN)
+participants = sa.open_by_key(configuration.PARTICIPANTS_KEY)
+grading = sa.open_by_key(configuration.GRADING_KEY)
+print("Loaded worksheets")
 
 
 def get_member_by_id_or_name(message, user: str) -> discord.Member or None:
@@ -19,6 +25,13 @@ def get_member_by_id_or_name(message, user: str) -> discord.Member or None:
         member = message.guild.get_member_named(user)
 
     return member
+
+
+def getTeams():
+
+    ws = participants.get_worksheet(0)
+    team_data = ws.get_all_records()
+    return team_data
 
 
 async def split_into_member_and_reason(message: discord.Message, parameters: str) -> tuple:

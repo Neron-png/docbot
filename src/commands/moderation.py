@@ -12,6 +12,73 @@ import logger
 
 # Registers all the commands; takes as a parameter the decorator factory to use.
 
+@command({
+    "syntax": "createTeam <code> <Team name> [<user tag> <user id>]",
+    "aliases": ["create"],
+    "role_requirements": {configuration.MODERATOR_ROLE},
+    "category": Category.MODERATION,
+    "description": "Create a team for Days of Coding"
+})
+async def createTeam(message: discord.Message, parameters: str, client: discord.Client) -> None:
+    """Creates a team for days of Coding"""
+
+    print(parameters)
+    if len(parameters) not in (4, 6, 8, 10):
+        raise CommandSyntaxError("Invalid parameters given. Ex: `create abcde testTeam neron#3610 209403862736437248`")
+    
+    message.reply("TODO, fallback")
+    
+    
+@command({
+    "syntax": "import_teams",
+    "aliases": ["import"],
+    "role_requirements": {configuration.MODERATOR_ROLE},
+    "category": Category.MODERATION,
+    "description": "Import teams for Days of coding"
+})
+async def import_teams(message: discord.Message, parameters: str, client: discord.Client) -> None:
+    """Import teams from the sheets"""
+
+    teams = util.getTeams()
+    registered_team_codes = []
+    category_channel_count = {x: 0 for x in configuration.TEAMS_CATEGORIES} # Counting because discord's limit is 25 channels per category
+    
+    for channel in message.guild.channels:
+        if channel.category and channel.category.id in configuration.TEAMS_CATEGORIES:
+                category_channel_count[channel.category.id] += 1
+                if str(channel.type) == 'text':
+                    registered_team_codes += [channel.topic]
+    
+    # Adding the team channel
+    print(teams)
+    for team in teams:
+        if team['CODE'] not in registered_team_codes:
+            
+            # Find empty category
+            for category in message.guild.categories:
+                if category.id not in configuration.TEAMS_CATEGORIES or category_channel_count[category.id] == 25:
+                    continue
+                
+                team_members = []
+                for i in range(1, 5):
+                    if team[f'PLAYER #{i} ID']:
+                        try:
+                            team_members += [ message.guild.get_member(team[f'PLAYER #{i} ID'])]
+                        except Exception as e:
+                            await message.channel.send(f"Issue with {team[f'PLAYER #{i} ID']}, {team['CODE']}")
+                
+                overwrites  = {
+                     x: discord.PermissionOverwrite(read_messages=True, attach_files=True, read_message_history=True) for x in team_members 
+                }
+                await category.create_text_channel(name= team['NAME'], topic=team['CODE'], overwrites=overwrites )
+                
+                break
+            
+            
+    print(category_channel_count)
+    print(registered_team_codes)
+    
+
 
 @command({
     "syntax": "warn <member> | [reason]",

@@ -34,7 +34,7 @@ async def submit(message: discord.Message, parameters: str, client: discord.Clie
     gradingMessage = f"{message.channel.name} | **{message.channel.topic}** | `{message.channel.id}`\n{attachmens[0].url}"
     await client.get_channel(configuration.SUBMIT_CHANNEL).send(gradingMessage)
     
-
+    
 @command({
     "syntax": "hug <target>",
     "allowed_channels": [329226224759209985, 827880703844286475],

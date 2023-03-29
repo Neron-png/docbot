@@ -13,7 +13,7 @@ import logger
 
 class DOCBotClient(discord.Client):
     
-    DEBUG_SPY_MODE = True
+    DEBUG_SPY_MODE = False
     
     async def on_ready(self) -> None:
         """Runs when the bot is operational"""
