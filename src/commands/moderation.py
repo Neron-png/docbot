@@ -2,7 +2,7 @@ from ast import literal_eval
 import asyncio
 import sqlite3
 from time import time
-
+import os.path
 import discord
 import configuration
 import util
@@ -81,36 +81,19 @@ async def import_teams(message: discord.Message, parameters: str, client: discor
 
 
 @command({
-    "syntax": "warn <member> | [reason]",
+    "syntax": "set_day <day number>",
+    "aliases": ["set"],
     "role_requirements": {configuration.MODERATOR_ROLE},
     "category": Category.MODERATION,
-    "description": "Warn someone"
+    "description": "Set the day of Days of coding and unlock the relevant stuff"
 })
-async def warn(message: discord.Message, parameters: str, client: discord.Client, action_name="warned") -> None:
-    member_reason = await util.split_into_member_and_reason(message, parameters)
-
-    if member_reason[0] == None:
-        raise CommandSyntaxError('You must specify a valid user.')
-
-    database_handle.cursor.execute('''INSERT INTO WARNS (ID, REASON, TIMESTAMP) \
-    VALUES(:member_id, :reason, :time)''',
-                                   {'member_id': member_reason[0].id, 'reason': str(member_reason[1]),
-                                    'time': round(time())})
-    database_handle.client.commit()
-
-    # Send a message to the channel that the command was used in
-    warn_embed = discord.Embed(title=action_name.title(),
-                               description=member_reason[0].mention) \
-        .add_field(name="Reason", value=member_reason[1])
-
-    await message.channel.send(embed=warn_embed)
-    await logger.log_moderation(message, warn_embed, client)
-
-    try:
-        # DM user
-        await member_reason[0].send(content=f"You have been **{action_name}** in {message.guild.name}!", embed=warn_embed)
-    except Exception:
-        await message.channel.send("Unable to DM user")
+async def set_day(message: discord.Message, parameters: str, client: discord.Client) -> None:
+    
+    day = parameters[0]
+    # get the file to update in the path
+    path = os.path.split(os.path.dirname(__file__))
+    print(path)
+    
 
 
 @command({
