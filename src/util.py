@@ -9,7 +9,7 @@ sa = gspread.service_account(configuration.SHEETS_TOKEN)
 participants = sa.open_by_key(configuration.PARTICIPANTS_KEY)
 grading = sa.open_by_key(configuration.GRADING_KEY)
 print("Loaded worksheets")
-
+teamlist = []
 
 def get_member_by_id_or_name(message, user: str) -> discord.Member or None:
     if user == "":
@@ -28,11 +28,28 @@ def get_member_by_id_or_name(message, user: str) -> discord.Member or None:
 
 
 def getTeams():
-
+    global teamlist
     ws = participants.get_worksheet(0)
     team_data = ws.get_all_records()
+    teamlist = team_data
     return team_data
 
+def getTeam(code: str):
+    global teamlist
+    
+    if not teamlist:
+        getTeams()
+    for team in teamlist:
+        if team["CODE"] == code:
+            return team
+    else:
+        return None
+
+def getGrading():
+    ws = grading.get_worksheet(0)
+    grading_data = ws.get_all_records()
+    #sort based on score
+    return sorted([ row for row in grading_data[2:] if row['name'] ], key=lambda team :team["score"], reverse=True)
 
 async def split_into_member_and_reason(message: discord.Message, parameters: str) -> tuple:
     """
